@@ -30,4 +30,5 @@ override.tf.json
 # example: *tfplan*
 
 # AWS credentials
-terraform_user_credentials.csv
+credentials_aws_terraform_user.csv
+credentials_github_token.txt
