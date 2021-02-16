@@ -68,3 +68,60 @@ output "<output_name>" {
 }
 ```
 
+## **Variables**
+Repeated static values can create more work in the future, to avoid repeating values we can create terraform variables that are set only once and use them in all the files where the value is needed. Variables are defined as follows:
+
+```
+variable "<variable_name>" {
+    default = "<variable_value>"
+}
+```
+
+The variables defined with a default value in the variables.tf file can be also defined by command line when running `terraform plan` or `terraform apply`:
+
+    terraform plan -var="<variable_name>=<variable_value>"
+
+When the variable has not a default value, the value will be required a  after running terraform plan or apply.
+
+When using different environments is recommended to define the variables in .tfvars files, in those fles we define the value of the variables and then select which of the files will be used when running the terraform plan or apply.
+
+Variable types allows to add a constraint about the values that the variable can have. For example, to define a variable of type number:
+
+```
+variable "<variable_name>" {
+    type = "number"
+}
+```
+
+The [count](https://www.terraform.io/docs/language/meta-arguments/count.html#basic-syntax) meta-argument accepts a whole number, and creates that many instances of the resource or module. Each instance has a distinct infrastructure object associated with it, and each is separately created, updated, or destroyed when the configuration is applied.
+
+In blocks where count is set, the name of the resources can be differentiate one from the others by adding the count.index attribute by instantiating the name of the resource, for example:
+
+```
+resource "<resource_type>" "<resource_name>" {
+    name  = "<variable_name>.${count.index}"
+    count = 3
+    path  = "/system/"
+}
+```
+
+Each of the created resources will be named as the variable name followed by the number of the count in each iteration as follows:
+1. <variable_name>0
+2. <variable_name>1
+3. <variable_name>2
+
+If it is required for the resources to be named with specific names we can define a list of values that contains each of the names for the resources, for example:
+
+
+```
+variable "<variable_name>" {
+    type    = list
+    default = ["name1", "name2", "name3"] 
+}
+
+resource "<resource_type>" "<resource_name>" {
+    name  = var.<variable_name>[count.index]
+    count = 3
+    path  = "/system/"
+}
+```
