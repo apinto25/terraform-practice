@@ -125,3 +125,23 @@ resource "<resource_type>" "<resource_name>" {
     path  = "/system/"
 }
 ```
+
+
+### Conditional Expression
+A conditional expression uses the value of a bool comparison to select on of the two values
+
+condition ? true : false
+
+
+### Local variables
+
+A local value assigns a name to an expression, allowing it to be used multiple times within a module without repeating.
+
+```
+locals {
+  common_tags = {
+    Owner   = "Devops Team"
+    service = "backend"
+  }
+}
+```
