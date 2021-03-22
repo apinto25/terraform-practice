@@ -172,3 +172,83 @@ To format a terraform file usng the command line you can run:
 Terraform Validate checks if a configuration is syntactically valid. It checks several aspects like unsoported arguments and undeclared variables.
 
     $ terraform validate
+
+## **Understanding Semantics**
+
+Terraform usually loads the configurations files within the directory specified in alphabetical order. Files must have the .tf or .tf.json extensions.
+
+Terraform files must be named accordingly to the type of the resource that will be created, the variables of the file or the provider, for example:
+
+```
+TF_directory
+  |- provider.tf
+  |- variables.tf
+  |- iam_user.tf
+```
+
+## **Dynamic Blocks**
+
+Dynamic Blocks allow to dynamically construct repeatable nested blocks which is supported inside resource data provider and provisioner blocks.
+
+### Iterators
+
+Temporary variables that represent the current element of the complex value. If omitted, the name of the variable defaults to the label of the dynamic block.
+
+## **Tainting Resources**
+
+The terraform tatin command manually marks a Terrafom-managed resource as tainted, forcing it to be destroyed and recreated on the next apply.
+
+    $ terraform taint <service>.<service_name>
+
+Tainting a resource for recreation may affect resources that depend on the newly tainted resource.
+
+
+## **Terraform Graph**
+
+Generates a visual representation of a configuration or execution plan. The output of the graph is in DOT format, so it can be converted to an image.
+
+    $ terraform graph > graph.dot
+
+## **Saving Terraform Plan to a File**
+
+    t$ erraform plan-out=<path>
+
+## **Terraform Output**
+
+The terraform output command is used to extract the value of an output variable from the state file.
+
+    $ terraform output <output_variable_name>
+
+## **Terraform Settings**
+
+The *terraform* configuration block type is used to configure some behaviours of Terraform itself. Settings are gathered together into terraform blocks:
+
+```
+terraform {
+  # ...
+}
+```
+
+### Terraform Version
+
+The *required_version* setting accepts a version constraint string, which specifies the terraform version that can be use in the configuration. If the actual version of terraform does not match to the constraints, terraform will produce an error.
+
+```
+terraform {
+  required_version = "> 0.12.0"
+}
+```
+
+### Terraform Provider Version
+
+The *required_providers* specifies all the providers required by the current module, mapping each local provider name to a source address and a version constraint.
+
+```
+terraform {
+  required_providers {
+    aws = "~> 2.0"
+  }
+}
+```
+
+## **Large Infrastructure**
