@@ -251,4 +251,102 @@ terraform {
 }
 ```
 
-## **Large Infrastructure**
+### Zipmap function
+This function constructs a map from a list of keys and a corresponding list of values. Both keyslist and valueslist must be of the same length. keyslist must be a list of strings, while valueslist can be a list of any type.
+
+
+## **Terraform Provisioners**
+
+Provisioners are used to execute scripts on a local or remote machine as part of resource creation or destruction.
+
+### Types of provisioners
+
+ * `local-exec`: allow to invoke local executable after resource is created.
+ * `remote-exec`: allow to invoke scripts directly on the remote server.
+
+
+### **Overview of provisioner types**
+
+ * Creation-time provisioner: are only run during creation, not during updating or any other lifecicle. Notice, if provisioner fails the resource is marked as tainted
+ * Destroy-time provisioner: are run before the resource is destroyed
+
+
+## **Terraform modules & workspaces**
+
+### DRY Principles
+
+DRY (Don't Repeat Yourself) is a principle of software development aimed at reducing repetition of software patterns.
+
+One common need on infrastructure management is to build environments like staging and production with similar setup but keeping environment variables different.
+
+Terraform allows us to us to have multiple workspaces, with each of the workspace we can have different set of environment variables associated.
+
+```
+provider "aws" {
+    region = "us-west-2"
+    access_key = ""
+    secret_key = ""
+}
+
+resource "aws_instance" "myec2" {
+    ami = "ami-0e999cbd62129e3b1"
+    instance_type = lookup(var.instance_type,terraform.workspace)
+}
+
+
+variable "instance_type" {
+    type = "map"
+
+    default = {
+        default = "t2.nano"
+        dev = "t2.micro"
+        prd = "t2.small"
+    }
+  
+}
+```
+
+Show the workspace and it is useful to difference btw workspace like staging and development and production
+
+    terraform workspace show
+
+To change the workspace
+    
+    terraform workspace select <name>
+
+
+Usage: terraform workspace
+
+  new, list, show, select and delete Terraform workspaces.
+
+Subcommands:
+    delete    Delete a workspace
+    list      List Workspaces
+    new       Create a new workspace
+    select    Select a workspace
+    show      Show the name of the current workspace
+
+
+## **Remote State Management**
+
+### Remote Backend
+
+TF files are stored in the central repository, but the tf state files won't be stored in the same place, they will be stored in remote backends such as AWS S3 buckets.
+
+Terraform supports various types of remote backends which can be used to store state data. Depending on remote backends which is being used, there can be various features. 
+
+ * Standard backend type: state storage and locking.
+ * Enhanced backend type: all features of standard + remote management.
+
+### Terraform State Modification
+
+It is important to never modify the state file directly. Instead, make use of terraform state command:
+
+    terraform state <command>
+
+ * list: list resources within terraform state file.
+ * mv: moves item terraform state.
+ * pull: manually download and output the state from remote state.
+ * push: manually upload a local state file to remote state.
+ * rm: remove items from the terraform state.
+ * show: show the attributes of a single resource in the state.
